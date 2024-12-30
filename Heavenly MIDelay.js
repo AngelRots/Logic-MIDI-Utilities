@@ -1,25 +1,59 @@
+// ----- VARS -----
+
 var NeedsTimingInfo = true; 
 
-/* MS-based and Tempo-based MIDI Delay with pitched up notes. */
+var DIVISIONS = [											
+        "1/64t",	
+        "1/64",   
+        "1/32t", 
+        "1/32",  
+        "1/16t",   
+        "1/16",  
+        "1/8T",   
+        "1/8",    
+        "1/4t",	 
+        "1/4",   
+        "1/2t",  
+        "1/2",   
+        "1/1",   
+];
+    var TIMES = [ 												 
+        0.04166666666667,									
+        0.0625,
+        0.08333333333333,
+        0.125,
+        0.16666666666667,
+        0.25,
+        0.33333333333333,
+        0.5,
+        0.66666666666667,
+        1,
+        1.33333333333333,
+        2,
+        4,
+];
+
+/* Tempo-based MIDI Delay with pitched up notes. */
+
+//----- HANDLE MIDI -----
 
 function HandleMIDI(event)
 {
     var daw = GetTimingInfo();
-
+   
     event.trace();
     event.send();
     if(event instanceof Note)
     {
         var pitchShift = GetParameter("Incoming Note Pitch");
-        var delayAmount = GetParameter("Delay Amount");
-        var bpmDelay = GetParameter("Tempo Based Delay");
+        var delayAmountIndex = GetParameter("Delay Amount");
         var delayTime;
 
-        if (bpmDelay > 0) {
+        if (delayAmountIndex >= 0 && delayAmountIndex < TIMES.length) {
             var quarterNoteDuration = 60000 / daw.tempo; 
-            delayTime = quarterNoteDuration * (bpmDelay / 4); 
+            delayTime = quarterNoteDuration * TIMES[delayAmountIndex]; 
         } else {
-            delayTime = delayAmount;
+            delayTime = 0;
         }
 
         event.pitch += pitchShift;
@@ -30,12 +64,9 @@ function HandleMIDI(event)
 var PluginParameters = [
     {
         name: "Delay Amount",
-        type: "log",
-        numberOfSteps: 2000,
-        minValue: 0,
-        maxValue: 2000,
-        unit: "ms",
-        defaultValue: 500
+        type: "menu",
+        valueStrings: DIVISIONS,
+        defaultValue: 5
     },
     {
         name: "Incoming Note Pitch",
@@ -44,14 +75,5 @@ var PluginParameters = [
         minValue: 0,
         maxValue: 24,
         defaultValue: 7
-    },
-    {
-        name: "Tempo Based Delay",
-        type: "lin",
-        numberOfSteps: 16,
-        minValue: 0,
-        maxValue: 16,
-        unit: "quarters",
-        defaultValue: 0
     }
 ];
