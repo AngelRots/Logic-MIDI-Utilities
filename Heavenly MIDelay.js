@@ -28,7 +28,30 @@ function HandleMIDI(event)
 }
 //----------------------------------------------------
 var PluginParameters = [
-    {name:"Delay Amount", type:"log", numberOfSteps:2000, minValue:0, maxValue: 2000, unit:"ms", defaultValue:500},
-    {name:"Incoming Note Pitch", type:"lin", numberOfSteps:16, minValue:0, maxValue: 24, defaultValue:7},
-    {name:"Tempo Based Delay", type:"lin", numberOfSteps:16, minValue:0, maxValue: 16, unit:"quarters", defaultValue:0}
+    {
+        name: "Delay Amount",
+        type: "log",
+        numberOfSteps: 2000,
+        minValue: 0,
+        maxValue: 2000,
+        unit: "ms",
+        defaultValue: 500
+    },
+    {
+        name: "Incoming Note Pitch",
+        type: "lin",
+        numberOfSteps: 16,
+        minValue: 0,
+        maxValue: 24,
+        defaultValue: 7
+    },
+    {
+        name: "Tempo Based Delay",
+        type: "lin",
+        numberOfSteps: 16,
+        minValue: 0,
+        maxValue: 16,
+        unit: "quarters",
+        defaultValue: 0
+    }
 ];
