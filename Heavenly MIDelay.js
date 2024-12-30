@@ -1,33 +1,34 @@
-//var NeedsTimingInfo = true; 
+var NeedsTimingInfo = true; 
 
-/* MS-based MIDI Delay with pitched up notes. */
+/* MS-based and Tempo-based MIDI Delay with pitched up notes. */
 
 function HandleMIDI(event)
 {
+    var daw = GetTimingInfo();
 
- //var daw = GetTimingInfo()
- var paramExt1 = GetParameter("Incoming Note Pitch")
- var paramExt2 = GetParameter("Delay Amount")
+    event.trace();
+    event.send();
+    if(event instanceof Note)
+    {
+        var pitchShift = GetParameter("Incoming Note Pitch");
+        var delayAmount = GetParameter("Delay Amount");
+        var bpmDelay = GetParameter("Tempo Based Delay");
+        var delayTime;
 
-	event.trace();
-	event.send();
-	if(event instanceof Note)
-	{
-	event.pitch += paramExt1;
-	event.sendAfterMilliseconds(paramExt2);
-	//event.trace();
+        if (bpmDelay > 0) {
+            var quarterNoteDuration = 60000 / daw.tempo; 
+            delayTime = quarterNoteDuration * (bpmDelay / 4); 
+        } else {
+            delayTime = delayAmount;
+        }
 
-	
-	}
+        event.pitch += pitchShift;
+        event.sendAfterMilliseconds(delayTime);
+    }
 }
 //----------------------------------------------------
 var PluginParameters = [
-
-{name:"Delay Amount", type:"log", numberOfSteps:2000,
-minValue:0, maxValue: 2000, unit:"ms", defaultValue:500},
-
-{name:"Incoming Note Pitch", type:"lin", numberOfSteps:16,
-minValue:0, maxValue: 24, defaultValue:7},
-
+    {name:"Delay Amount", type:"log", numberOfSteps:2000, minValue:0, maxValue: 2000, unit:"ms", defaultValue:500},
+    {name:"Incoming Note Pitch", type:"lin", numberOfSteps:16, minValue:0, maxValue: 24, defaultValue:7},
+    {name:"Tempo Based Delay", type:"lin", numberOfSteps:16, minValue:0, maxValue: 16, unit:"quarters", defaultValue:0}
 ];
-
